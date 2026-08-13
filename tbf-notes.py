@@ -1,62 +1,64 @@
-#!/data/data/com.termux/files/usr/bin/python
+#!/usr/bin/env python3
+# ============================================
+#   TBF-Notes v2.5 PRO
+#   by TBFPUMBA — Technology. Security. Efficiency.
+# ============================================
 
 import os
 import subprocess
 import sys
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.prompt import Prompt, Confirm
+from pyfiglet import Figlet
 
+console = Console()
 NOTES_DIR = os.path.expanduser("~/.tbf_notes")
 os.makedirs(NOTES_DIR, exist_ok=True)
-
-# Кольори (ANSI)
-RESET = "\033[0m"
-RED = "\033[91m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-BLUE = "\033[94m"
-PURPLE = "\033[95m"
-CYAN = "\033[96m"
-WHITE = "\033[97m"
-BOLD = "\033[1m"
 
 def clear():
     os.system("clear")
 
 def show_banner():
-    print(f"""{PURPLE}{BOLD}
-    ████████╗██████╗ ███████╗    ███╗   ██╗ ██████╗ ████████╗███████╗███████╗
-    ╚══██╔══╝██╔══██╗██╔════╝    ████╗  ██║██╔═══██╗╚══██╔══╝██╔════╝██╔════╝
-       ██║   ██████╔╝█████╗      ██╔██╗ ██║██║   ██║   ██║   █████╗  ███████╗
-       ██║   ██╔══██╗██╔══╝      ██║╚██╗██║██║   ██║   ██║   ██╔══╝  ╚════██║
-       ██║   ██████╔╝██║         ██║ ╚████║╚██████╔╝   ██║   ███████╗███████║
-       ╚═╝   ╚═════╝ ╚═╝         ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝
-{RESET}""")
-    print(f"{CYAN}╔══════════════════════════════════════════════════════════════════╗{RESET}")
-    print(f"{CYAN}║{RESET} {BOLD}🔥 TBF-Notes v2.0{RESET}                                              {CYAN}║{RESET}")
-    print(f"{CYAN}║{RESET} {BOLD}⚡ by TBFPUMBA — Technology. Security. Efficiency.{RESET}              {CYAN}║{RESET}")
-    print(f"{CYAN}╚══════════════════════════════════════════════════════════════════╝{RESET}")
-    print()
+    f = Figlet(font='slant')
+    ascii_banner = f.renderText('TBF - NOTES')
+    console.print(Panel(
+        f"[bold magenta]{ascii_banner}[/bold magenta]"
+        "[bold cyan]🔥 TBF-Notes v2.5 PRO — Terminal Fast Notes[/bold cyan]\n"
+        "[bold yellow]⚡ by TBFPUMBA — Technology. Security. Efficiency.[/bold yellow]",
+        border_style="cyan",
+        expand=False
+    ))
 
 def show_menu():
-    print(f"{GREEN}📂 Виберіть дію:{RESET}")
-    print(f"  {YELLOW}1.{RESET} 📝 Створити нотатку")
-    print(f"  {YELLOW}2.{RESET} 📋 Показати всі нотатки")
-    print(f"  {YELLOW}3.{RESET} 🔍 Пошук у нотатках")
-    print(f"  {YELLOW}4.{RESET} ✏️ Редагувати нотатку")
-    print(f"  {YELLOW}5.{RESET} 🗑️ Видалити нотатку")
-    print(f"  {YELLOW}6.{RESET} ❌ Вихід")
-    print()
-    return input("👉 Виберіть (1-6): ")
+    table = Table(title="[bold green]📂 Меню управления[/bold green]", show_header=False, expand=True)
+    table.add_column("Key", style="bold yellow", width=4)
+    table.add_column("Action", style="bold white")
+
+    table.add_row("1", "📝 Створити нотатку")
+    table.add_row("2", "📋 Показати всі нотатки")
+    table.add_row("3", "🔍 Пошук у нотатках")
+    table.add_row("4", "✏️ Редагувати нотатку (nano)")
+    table.add_row("5", "🗑️ Видалити нотатку")
+    table.add_row("6", "❌ Вихід")
+    
+    console.print(table)
+    return Prompt.ask("\n👉 [bold cyan]Виберіть дію[/bold cyan]", choices=["1", "2", "3", "4", "5", "6"])
 
 def create_note():
-    print()
-    title = input("📝 Введіть назву нотатки: ")
-    filename = os.path.join(NOTES_DIR, title.replace(" ", "_") + ".txt")
-    
-    if os.path.exists(filename):
-        print(f"{RED}❌ Нотатка з такою назвою вже існує!{RESET}")
+    console.print("\n[bold cyan]📝 Створення нової нотатки[/bold cyan]")
+    title = Prompt.ask("Введіть назву нотатки").strip()
+    if not title:
+        console.print("[bold red]❌ Назва не може бути порожньою![/bold red]")
         return
-    
-    print(f"{GREEN}✏️ Введіть текст нотатки (Ctrl+D для завершення):{RESET}")
+
+    filename = os.path.join(NOTES_DIR, title.replace(" ", "_") + ".txt")
+    if os.path.exists(filename):
+        console.print(f"[bold red]❌ Нотатка з такою назвою вже існує![/bold red]")
+        return
+
+    console.print("[dim]✏️ Введіть текст нотатки (Ctrl+D для завершення):[/dim]")
     lines = []
     try:
         while True:
@@ -64,113 +66,104 @@ def create_note():
             lines.append(line)
     except EOFError:
         pass
-    
-    with open(filename, "w") as f:
+
+    with open(filename, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-    print(f"{GREEN}✅ Нотатку збережено!{RESET}")
+    console.print(f"[bold green]✅ Нотатку '{title}' успішно збережено![/bold green]")
 
 def show_notes():
-    print()
-    print(f"{CYAN}📋 Всі нотатки:{RESET}")
-    print("=" * 50)
-    
     notes = [f for f in os.listdir(NOTES_DIR) if f.endswith(".txt")]
     if not notes:
-        print(f"{YELLOW}📭 Нотаток немає.{RESET}")
-        input("Натисніть Enter...")
+        console.print("\n[bold yellow]📭 Нотаток немає.[/bold yellow]")
+        Prompt.ask("\n[dim]Натисніть Enter...[/dim]")
         return
-    
+
+    table = Table(title="[bold cyan]📋 Всі нотатки[/bold cyan]", expand=True)
+    table.add_column("№", style="cyan", justify="center", width=4)
+    table.add_column("Назва", style="bold yellow")
+    table.add_column("Символів", style="green", justify="right")
+    table.add_column("Перші 100 символів", style="dim white")
+
     for i, note in enumerate(notes, 1):
         title = note.replace("_", " ").replace(".txt", "")
-        size = os.path.getsize(os.path.join(NOTES_DIR, note))
-        print(f"{GREEN}{i}.{RESET} {BOLD}{title}{RESET} ({size} символів)")
-        with open(os.path.join(NOTES_DIR, note), "r") as f:
-            content = f.read(100)
-        print(f"   {BLUE}📄 Перші 100 символів:{RESET}")
-        print(f"   {content}...")
-        print()
-    
-    input("Натисніть Enter...")
+        filepath = os.path.join(NOTES_DIR, note)
+        size = str(os.path.getsize(filepath))
+        with open(filepath, "r", encoding="utf-8") as f:
+            content = f.read(100).replace("\n", " ")
+        table.add_row(str(i), title, size, content + "...")
+
+    console.print(table)
+    Prompt.ask("\n[dim]Натисніть Enter...[/dim]")
 
 def search_notes():
-    print()
-    search_term = input("🔍 Введіть слово для пошуку: ")
-    print(f"{CYAN}🔍 Результати пошуку:{RESET}")
-    print("=" * 50)
-    
+    search_term = Prompt.ask("\n🔍 [bold cyan]Введіть слово для пошуку[/bold cyan]")
     found = 0
+
     for note in os.listdir(NOTES_DIR):
         if not note.endswith(".txt"):
             continue
         filepath = os.path.join(NOTES_DIR, note)
-        with open(filepath, "r") as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
             if search_term.lower() in content.lower():
                 title = note.replace("_", " ").replace(".txt", "")
-                print(f"{GREEN}✅ Знайдено в:{RESET} {BOLD}{title}{RESET}")
-                for line in content.split("\n"):
-                    if search_term.lower() in line.lower():
-                        highlighted = line.replace(search_term, f"{RED}{search_term}{RESET}")
-                        print(f"  {highlighted}")
-                print()
+                console.print(Panel(
+                    f"[bold green]✅ Знайдено в: {title}[/bold green]\n" +
+                    "\n".join([line.replace(search_term, f"[bold red]{search_term}[/bold red]") 
+                               for line in content.split("\n") if search_term.lower() in line.lower()]),
+                    border_style="yellow"
+                ))
                 found += 1
-    
+
     if found == 0:
-        print(f"{YELLOW}❌ Нічого не знайдено.{RESET}")
-    
-    input("Натисніть Enter...")
+        console.print("[bold yellow]❌ Нічого не знайдено.[/bold yellow]")
+
+    Prompt.ask("\n[dim]Натисніть Enter...[/dim]")
 
 def edit_note():
     notes = [f for f in os.listdir(NOTES_DIR) if f.endswith(".txt")]
     if not notes:
-        print(f"{YELLOW}📭 Нотаток немає.{RESET}")
+        console.print("\n[bold yellow]📭 Нотаток немає.[/bold yellow]")
         return
-    
-    print(f"{CYAN}✏️ Оберіть нотатку для редагування:{RESET}")
+
+    console.print("\n[bold cyan]✏️ Оберіть нотатку для редагування:[/bold cyan]")
     for i, note in enumerate(notes, 1):
-        print(f"  {i}. {note.replace('_', ' ').replace('.txt', '')}")
-    
-    try:
-        choice = int(input("👉 Номер: ")) - 1
-        if 0 <= choice < len(notes):
-            subprocess.run(["nano", os.path.join(NOTES_DIR, notes[choice])])
-            print(f"{GREEN}✅ Нотатку збережено!{RESET}")
-        else:
-            print(f"{RED}❌ Неправильний вибір.{RESET}")
-    except ValueError:
-        print(f"{RED}❌ Введіть число.{RESET}")
+        console.print(f"  [bold yellow]{i}.[/bold yellow] {note.replace('_', ' ').replace('.txt', '')}")
+
+    choice = Prompt.ask("👉 Номер", default="1")
+    if choice.isdigit() and 1 <= int(choice) <= len(notes):
+        subprocess.run(["nano", os.path.join(NOTES_DIR, notes[int(choice) - 1])])
+        console.print("[bold green]✅ Нотатку збережено![/bold green]")
+    else:
+        console.print("[bold red]❌ Неправильний вибір.[/bold red]")
 
 def delete_note():
     notes = [f for f in os.listdir(NOTES_DIR) if f.endswith(".txt")]
     if not notes:
-        print(f"{YELLOW}📭 Нотаток немає.{RESET}")
+        console.print("\n[bold yellow]📭 Нотаток немає.[/bold yellow]")
         return
-    
-    print(f"{CYAN}🗑️ Оберіть нотатку для видалення:{RESET}")
+
+    console.print("\n[bold cyan]🗑️ Оберіть нотатку для видалення:[/bold cyan]")
     for i, note in enumerate(notes, 1):
-        print(f"  {i}. {note.replace('_', ' ').replace('.txt', '')}")
-    
-    try:
-        choice = int(input("👉 Номер: ")) - 1
-        if 0 <= choice < len(notes):
-            title = notes[choice].replace("_", " ").replace(".txt", "")
-            confirm = input(f"Видалити '{title}'? (y/n): ")
-            if confirm.lower() == 'y':
-                os.remove(os.path.join(NOTES_DIR, notes[choice]))
-                print(f"{GREEN}✅ Нотатку видалено.{RESET}")
-            else:
-                print(f"{YELLOW}❌ Скасовано.{RESET}")
+        console.print(f"  [bold yellow]{i}.[/bold yellow] {note.replace('_', ' ').replace('.txt', '')}")
+
+    choice = Prompt.ask("👉 Номер")
+    if choice.isdigit() and 1 <= int(choice) <= len(notes):
+        title = notes[int(choice) - 1].replace("_", " ").replace(".txt", "")
+        if Confirm.ask(f"Видалити '{title}'?"):
+            os.remove(os.path.join(NOTES_DIR, notes[int(choice) - 1]))
+            console.print("[bold green]✅ Нотатку видалено.[/bold green]")
         else:
-            print(f"{RED}❌ Неправильний вибір.{RESET}")
-    except ValueError:
-        print(f"{RED}❌ Введіть число.{RESET}")
+            console.print("[bold yellow]❌ Скасовано.[/bold yellow]")
+    else:
+        console.print("[bold red]❌ Неправильний вибір.[/bold red]")
 
 def main():
-    clear()
-    show_banner()
-    
     while True:
+        clear()
+        show_banner()
         choice = show_menu()
+        
         if choice == "1":
             create_note()
         elif choice == "2":
@@ -182,10 +175,9 @@ def main():
         elif choice == "5":
             delete_note()
         elif choice == "6":
-            print(f"{GREEN}👋 Дякуємо, що використовуєте TBF-Notes!{RESET}")
+            console.print("[bold green]👋 Дякуємо, що використовуєте TBF-Notes![/bold green]")
             sys.exit(0)
-        else:
-            print(f"{RED}❌ Невірний вибір.{RESET}")
 
 if __name__ == "__main__":
     main()
+    
