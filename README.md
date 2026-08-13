@@ -1,30 +1,35 @@
-# 📒 TBF-Notes
+# 📝 TBF-Notes v2.5 PRO
 
-[![Version](https://img.shields.io/badge/version-2.0-blue)](https://github.com/cocofembo-glitch/TBF-Notes)
-[![Python](https://img.shields.io/badge/python-3.x-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Status](https://img.shields.io/badge/status-stable-brightgreen)]()
-[![Stars](https://img.shields.io/github/stars/cocofembo-glitch/TBF-Notes)](https://github.com/cocofembo-glitch/TBF-Notes/stargazers)
-[![Forks](https://img.shields.io/github/forks/cocofembo-glitch/TBF-Notes)](https://github.com/cocofembo-glitch/TBF-Notes/forks)
+<p align="center">
+  <img src="https://img.shields.io/badge/License-Apache--2.0-brightgreen.svg" alt="License">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/Platform-Termux%20%7C%20Linux-orange.svg" alt="Platform">
+  <img src="https://img.shields.io/badge/UI-Rich%20%2F%20Cyberpunk-magenta.svg" alt="UI Style">
+</p>
 
-> **Terminal-Based Fast Notes** — швидкий та зручний менеджер нотаток у терміналі.
-
----
-
-## 🚀 Можливості
-
-- 📝 **Створити нотатку** — швидке створення з назвою та текстом
-- 📋 **Показати всі нотатки** — перегляд списку з першими 100 символами
-- 🔍 **Пошук у нотатках** — миттєвий пошук за ключовими словами
-- ✏️ **Редагувати нотатку** — зручне редагування через `nano`
-- 🗑️ **Видалити нотатку** — безпечне видалення з підтвердженням
-- 🎨 **Кольоровий інтерфейс** — приємний та зручний дизайн
-- 💾 **Автозбереження** — всі нотатки зберігаються автоматично
+> **Terminal-Based Fast Notes Manager** — быстрая, функциональная и удобная консольная утилита для работы с заметками прямо из терминала.
 
 ---
 
-## 📂 Де зберігаються нотатки
+## ✨ Основные возможности
 
-Всі нотатки зберігаються у папці:
+- 🎨 **Rich Cyberpunk UI:** Интерактивные таблицы, аккуратные панели и сочные цвета.
+- 📝 **Создание и редактор:** Быстрое создание заметок или редактирование через встроенный `nano`.
+- 🔍 **Полнотекстовый поиск:** Мгновенный поиск слов по всем файлам с подсветкой найденого фрагмента.
+- 📋 **Предпросмотр:** Таблица со всеми заметками, их размером и первыми 100 символами текста.
+- 💾 **Автосохранение:** Все файлы автоматически складываются в директорию `~/.tbf_notes/`.
+
+---
+
+## 🛠️ Зависимости
+
+Интерфейс использует следующие библиотеки:
+- `rich`
+- `pyfiglet`
+
+---
+
+## 🚀 Быстрый запуск
+
 ```bash
-~/.tbf_notes/
+git clone https://github.com/cocofembo-glitch/TBF-Notes.git && cd TBF-Notes && pip install -r requirements.txt && python tbf-notes.py
