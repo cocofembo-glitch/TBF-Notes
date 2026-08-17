@@ -36,29 +36,29 @@ def show_menu():
     table.add_column("Key", style="bold yellow", width=4)
     table.add_column("Action", style="bold white")
 
-    table.add_row("1", "📝 Створити нотатку")
-    table.add_row("2", "📋 Показати всі нотатки")
-    table.add_row("3", "🔍 Пошук у нотатках")
-    table.add_row("4", "✏️ Редагувати нотатку (nano)")
-    table.add_row("5", "🗑️ Видалити нотатку")
-    table.add_row("6", "❌ Вихід")
+    table.add_row("1", "📝 Создать заметку")
+    table.add_row("2", "📋 Показать все заметки")
+    table.add_row("3", "🔍 Поиск в заметках")
+    table.add_row("4", "✏️ Редактировать заметку (nano)")
+    table.add_row("5", "🗑️ Удалить заметку")
+    table.add_row("6", "❌ Выход")
     
     console.print(table)
-    return Prompt.ask("\n👉 [bold cyan]Виберіть дію[/bold cyan]", choices=["1", "2", "3", "4", "5", "6"])
+    return Prompt.ask("\n👉 [bold cyan]Выберите действие[/bold cyan]", choices=["1", "2", "3", "4", "5", "6"])
 
 def create_note():
-    console.print("\n[bold cyan]📝 Створення нової нотатки[/bold cyan]")
-    title = Prompt.ask("Введіть назву нотатки").strip()
+    console.print("\n[bold cyan]📝 Создание новой заметки[/bold cyan]")
+    title = Prompt.ask("Введите название заметки").strip()
     if not title:
-        console.print("[bold red]❌ Назва не може бути порожньою![/bold red]")
+        console.print("[bold red]❌ Название не может быть пустым![/bold red]")
         return
 
     filename = os.path.join(NOTES_DIR, title.replace(" ", "_") + ".txt")
     if os.path.exists(filename):
-        console.print(f"[bold red]❌ Нотатка з такою назвою вже існує![/bold red]")
+        console.print(f"[bold red]❌ Заметка с таким названием уже существует![/bold red]")
         return
 
-    console.print("[dim]✏️ Введіть текст нотатки (Ctrl+D для завершення):[/dim]")
+    console.print("[dim]✏️ Введите текст заметки (Ctrl+D для завершения):[/dim]")
     lines = []
     try:
         while True:
@@ -69,20 +69,20 @@ def create_note():
 
     with open(filename, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-    console.print(f"[bold green]✅ Нотатку '{title}' успішно збережено![/bold green]")
+    console.print(f"[bold green]✅ Заметка '{title}' успешно сохранена![/bold green]")
 
 def show_notes():
     notes = [f for f in os.listdir(NOTES_DIR) if f.endswith(".txt")]
     if not notes:
-        console.print("\n[bold yellow]📭 Нотаток немає.[/bold yellow]")
-        Prompt.ask("\n[dim]Натисніть Enter...[/dim]")
+        console.print("\n[bold yellow]📭 Заметок нет.[/bold yellow]")
+        Prompt.ask("\n[dim]Нажмите Enter...[/dim]")
         return
 
-    table = Table(title="[bold cyan]📋 Всі нотатки[/bold cyan]", expand=True)
+    table = Table(title="[bold cyan]📋 Все заметки[/bold cyan]", expand=True)
     table.add_column("№", style="cyan", justify="center", width=4)
-    table.add_column("Назва", style="bold yellow")
-    table.add_column("Символів", style="green", justify="right")
-    table.add_column("Перші 100 символів", style="dim white")
+    table.add_column("Название", style="bold yellow")
+    table.add_column("Символов", style="green", justify="right")
+    table.add_column("Первые 100 символов", style="dim white")
 
     for i, note in enumerate(notes, 1):
         title = note.replace("_", " ").replace(".txt", "")
@@ -93,10 +93,10 @@ def show_notes():
         table.add_row(str(i), title, size, content + "...")
 
     console.print(table)
-    Prompt.ask("\n[dim]Натисніть Enter...[/dim]")
+    Prompt.ask("\n[dim]Нажмите Enter...[/dim]")
 
 def search_notes():
-    search_term = Prompt.ask("\n🔍 [bold cyan]Введіть слово для пошуку[/bold cyan]")
+    search_term = Prompt.ask("\n🔍 [bold cyan]Введите слово для поиска[/bold cyan]")
     found = 0
 
     for note in os.listdir(NOTES_DIR):
@@ -108,7 +108,7 @@ def search_notes():
             if search_term.lower() in content.lower():
                 title = note.replace("_", " ").replace(".txt", "")
                 console.print(Panel(
-                    f"[bold green]✅ Знайдено в: {title}[/bold green]\n" +
+                    f"[bold green]✅ Найдено в: {title}[/bold green]\n" +
                     "\n".join([line.replace(search_term, f"[bold red]{search_term}[/bold red]") 
                                for line in content.split("\n") if search_term.lower() in line.lower()]),
                     border_style="yellow"
@@ -116,47 +116,47 @@ def search_notes():
                 found += 1
 
     if found == 0:
-        console.print("[bold yellow]❌ Нічого не знайдено.[/bold yellow]")
+        console.print("[bold yellow]❌ Ничего не найдено.[/bold yellow]")
 
-    Prompt.ask("\n[dim]Натисніть Enter...[/dim]")
+    Prompt.ask("\n[dim]Нажмите Enter...[/dim]")
 
 def edit_note():
     notes = [f for f in os.listdir(NOTES_DIR) if f.endswith(".txt")]
     if not notes:
-        console.print("\n[bold yellow]📭 Нотаток немає.[/bold yellow]")
+        console.print("\n[bold yellow]📭 Заметок нет.[/bold yellow]")
         return
 
-    console.print("\n[bold cyan]✏️ Оберіть нотатку для редагування:[/bold cyan]")
+    console.print("\n[bold cyan]✏️ Выберите заметку для редактирования:[/bold cyan]")
     for i, note in enumerate(notes, 1):
         console.print(f"  [bold yellow]{i}.[/bold yellow] {note.replace('_', ' ').replace('.txt', '')}")
 
     choice = Prompt.ask("👉 Номер", default="1")
     if choice.isdigit() and 1 <= int(choice) <= len(notes):
         subprocess.run(["nano", os.path.join(NOTES_DIR, notes[int(choice) - 1])])
-        console.print("[bold green]✅ Нотатку збережено![/bold green]")
+        console.print("[bold green]✅ Заметка сохранена![/bold green]")
     else:
-        console.print("[bold red]❌ Неправильний вибір.[/bold red]")
+        console.print("[bold red]❌ Неверный выбор.[/bold red]")
 
 def delete_note():
     notes = [f for f in os.listdir(NOTES_DIR) if f.endswith(".txt")]
     if not notes:
-        console.print("\n[bold yellow]📭 Нотаток немає.[/bold yellow]")
+        console.print("\n[bold yellow]📭 Заметок нет.[/bold yellow]")
         return
 
-    console.print("\n[bold cyan]🗑️ Оберіть нотатку для видалення:[/bold cyan]")
+    console.print("\n[bold cyan]🗑️ Выберите заметку для удаления:[/bold cyan]")
     for i, note in enumerate(notes, 1):
         console.print(f"  [bold yellow]{i}.[/bold yellow] {note.replace('_', ' ').replace('.txt', '')}")
 
     choice = Prompt.ask("👉 Номер")
     if choice.isdigit() and 1 <= int(choice) <= len(notes):
         title = notes[int(choice) - 1].replace("_", " ").replace(".txt", "")
-        if Confirm.ask(f"Видалити '{title}'?"):
+        if Confirm.ask(f"Удалить '{title}'?"):
             os.remove(os.path.join(NOTES_DIR, notes[int(choice) - 1]))
-            console.print("[bold green]✅ Нотатку видалено.[/bold green]")
+            console.print("[bold green]✅ Заметка удалена.[/bold green]")
         else:
-            console.print("[bold yellow]❌ Скасовано.[/bold yellow]")
+            console.print("[bold yellow]❌ Отменено.[/bold yellow]")
     else:
-        console.print("[bold red]❌ Неправильний вибір.[/bold red]")
+        console.print("[bold red]❌ Неверный выбор.[/bold red]")
 
 def main():
     while True:
@@ -175,7 +175,7 @@ def main():
         elif choice == "5":
             delete_note()
         elif choice == "6":
-            console.print("[bold green]👋 Дякуємо, що використовуєте TBF-Notes![/bold green]")
+            console.print("[bold green]👋 Спасибо за использование TBF-Notes![/bold green]")
             sys.exit(0)
 
 if __name__ == "__main__":
